@@ -5,8 +5,11 @@ namespace ThreadNool
 {
     class Table
     {
+        Texture2D texture;
+
         public Table()
         {
+            texture = Game1.TableTexture;
         }
 
         public void Update(GameTime gameTime)

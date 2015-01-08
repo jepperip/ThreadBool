@@ -18,7 +18,7 @@ namespace ThreadNool
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        Table table = new Table();
+        Table table;
 
         public static Texture2D BallTexture, TableTexture;
 
@@ -51,6 +51,8 @@ namespace ThreadNool
             spriteBatch = new SpriteBatch(GraphicsDevice);
             BallTexture = Content.Load<Texture2D>("ball");
             TableTexture = Content.Load<Texture2D>("PoolTableReferenceTop");
+
+            table = new Table();
 
         }
 
