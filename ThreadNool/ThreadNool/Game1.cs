@@ -19,6 +19,8 @@ namespace ThreadNool
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
 
+        public static Texture2D BallTexture, TableTexture;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -46,17 +48,9 @@ namespace ThreadNool
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
+            BallTexture = Content.Load<Texture2D>("ball.png");
+            TableTexture = Content.Load<Texture2D>("PoolTableReferenceTop");
 
-            // TODO: use this.Content to load your game content here
-        }
-
-        /// <summary>
-        /// UnloadContent will be called once per game and is the place to unload
-        /// all content.
-        /// </summary>
-        protected override void UnloadContent()
-        {
-            // TODO: Unload any non ContentManager content here
         }
 
         /// <summary>
@@ -67,10 +61,9 @@ namespace ThreadNool
         protected override void Update(GameTime gameTime)
         {
             // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
-            // TODO: Add your update logic here
 
             base.Update(gameTime);
         }
@@ -84,7 +77,10 @@ namespace ThreadNool
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             // TODO: Add your drawing code here
+            spriteBatch.Begin();
 
+
+            spriteBatch.End();
             base.Draw(gameTime);
         }
     }
