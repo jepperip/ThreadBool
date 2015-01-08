@@ -22,12 +22,11 @@ namespace ThreadNool
         SpriteBatch spriteBatch;
         List<Ball> balls;
         Table table;
-
         MouseState previousMouseState;
         MouseState currentMouseState;
         bool firstClick = true;
 
-        public static Texture2D BallTexture, TableTexture;
+        public static Texture2D BallTexture, TableTexture, Pixel;
 
         public Game1()
         {
@@ -60,6 +59,7 @@ namespace ThreadNool
             spriteBatch = new SpriteBatch(GraphicsDevice);
             BallTexture = Content.Load<Texture2D>("ball");
             TableTexture = Content.Load<Texture2D>("PoolTableReferenceTop");
+            Pixel = Content.Load<Texture2D>("pixel");
             balls = new List<Ball>();
             balls.Add(new Ball(new Vector2(80, 120), Color.Red));
             balls.Add(new Ball(new Vector2(80, 160), Color.Red));
