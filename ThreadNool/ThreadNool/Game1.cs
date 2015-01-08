@@ -103,7 +103,10 @@ namespace ThreadNool
                     foreach(Ball b in balls)
                     {
                         if (b.ClickedOn(clickPos))
+                        {
                             currentlySelectedBall = b;
+                            firstClick = !firstClick;
+                        }
                     }
                 }
                 else
@@ -118,9 +121,9 @@ namespace ThreadNool
                         //t1.Start();
                         currentlySelectedBall.MoveOnThread();
                         currentlySelectedBall = null;
+                        firstClick = !firstClick;
                     }
                 }
-                firstClick = !firstClick;
             }
 
             // Allows the game to exit
