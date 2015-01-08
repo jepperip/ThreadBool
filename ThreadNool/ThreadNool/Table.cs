@@ -63,6 +63,10 @@ namespace ThreadNool
 
         }
 
+        /// <summary>
+        /// Draws the table. If the boolean drawHitboxes is true also draws hitboxes for the borders and the holes.
+        /// </summary>
+        /// <param name="s">The spritebatch wich the table will be drawn on</param>
         public void Draw(SpriteBatch s)
         {
             s.Draw(Game1.TableTexture, drawRectangle, Color.White);
@@ -76,10 +80,7 @@ namespace ThreadNool
                 {
                     s.Draw(Game1.Pixel, r, Color.PowderBlue);
                 }
-
-            }
-            
+            }            
         }
-
     }
 }
