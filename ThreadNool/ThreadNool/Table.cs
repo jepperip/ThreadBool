@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿//Dahlberg, Simon och Sahlin, Jesper 2014-01-08
+
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -20,7 +22,11 @@ namespace ThreadNool
         static readonly int centerHeight = (int)(Game1.ScreenWidth * 0.0351662404092072);
         static readonly int centerPosition = (int)(Game1.ScreenWidth / 2 - centerWidth / 2);
         static readonly int borderWidth = (int)(Game1.ScreenWidth * 0.0485933503836317); 
-
+       
+        /// <summary>
+        /// Creates the table
+        /// </summary>
+       
         public static void Setup()
         {
             texture = Game1.TableTexture;
@@ -30,6 +36,9 @@ namespace ThreadNool
             CreateBorders();
         }
 
+        /// <summary>
+        /// Creates the objects that represents the tables holes
+        /// </summary>
         private static void CreateHoles()
         {
             cornerTopLeft = new Rectangle(0, 0, cornerSize, cornerSize);
@@ -48,6 +57,9 @@ namespace ThreadNool
             holes.Add(centerBottom);
         }
 
+        /// <summary>
+        /// Creates the objects that represents the tables borders
+        /// </summary>
         private static void CreateBorders()
         {
             left = new Rectangle(0, cornerTopLeft.Bottom, borderWidth, cornerBottomLeft.Top - cornerTopLeft.Bottom);
@@ -65,6 +77,11 @@ namespace ThreadNool
             borders.Add(bottomRight);
         }
 
+        /// <summary>
+        /// Returns true if a given ball has collided with any of the borders of the table
+        /// </summary>
+        /// <param name="b">The ball to test with</param>
+        /// <returns>True if the ball has collided with any borders</returns>
         public static bool CollidedWithBorder(Ball b)
         {
             foreach (Rectangle r in borders)
@@ -78,11 +95,28 @@ namespace ThreadNool
         }
 
         /// <summary>
-        /// Checks if a ball(circle) has colided with a rectangle
+        /// Returns true if a given ball has collided with any of the holes of the table
+        /// </summary>
+        /// <param name="b">The ball to test with</param>
+        /// <returns>True if the ball has collided with any holes</returns>
+        public static bool CollidedWithHole(Ball b)
+        {
+            foreach (Rectangle r in holes)
+            {
+                if (Collision(b, r))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if a ball(circle) has collided with a rectangle
         /// </summary>
         /// <param name="b">The circle</param>
         /// <param name="r">The rectangle</param>
-        /// <returns></returns>
+        /// <returns>If the circle has collided with the rectangle</returns>
         private static bool Collision(Ball b, Rectangle r)
         {
             float closestX = MathHelper.Clamp(b.GetCenter().X, r.Left, r.Right);
@@ -90,12 +124,6 @@ namespace ThreadNool
             float distanceX = b.GetCenter().X - closestX;
             float distanceY = b.GetCenter().Y - closestY;
             return distanceX * distanceX + distanceY * distanceY < b.Radius * b.Radius;
-        }
-
-
-        public static void Update(GameTime gameTime)
-        {
-
         }
 
         /// <summary>
