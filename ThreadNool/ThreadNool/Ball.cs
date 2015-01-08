@@ -7,6 +7,7 @@ using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Threading;
+using System.Threading.Tasks;
 
 namespace ThreadNool
 {
@@ -14,16 +15,18 @@ namespace ThreadNool
     {
         int radius;
         Vector2 position, direction, velocity;
-        float falloff = 0.9999998f;
+        float falloff = 0.998f;
         Texture2D texture;
         Color color, initialColor;
         bool selected = false;
+        Task task;
+        List<Ball> balls;
 
         public int Radius { get { return radius; } }
         public Vector2 Position { get { return position; } }
 
         public Vector2 Direction { get { return direction; } set { direction = value; } }
-        public Ball(Vector2 initPos, Color color)
+        public Ball(Vector2 initPos, Color color, List<Ball> balls)
         {
             radius = 16;
             position = initPos;
@@ -31,6 +34,8 @@ namespace ThreadNool
             texture = Game1.BallTexture;
             direction = Vector2.Zero;
             velocity = Vector2.Zero;
+            task = new Task(new Action(Work));
+            this.balls = balls;
         }
 
         public Vector2 GetCenter()
@@ -66,6 +71,8 @@ namespace ThreadNool
             }
             position += velocity;
             velocity *= falloff;
+
+            
             
         }
 
@@ -81,28 +88,56 @@ namespace ThreadNool
 
         public void MoveOnThread()
         {
-            System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
-            watch.Start();
-            int timer = 60000;
-            
-            int elapsed = watch.Elapsed.Milliseconds;
-            
-            while (true)
+            if(task.IsCompleted)
             {
-                int elapsedGameTime = watch.Elapsed.Milliseconds - elapsed;
+                task.Start();
+            }
+            //System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
+            //watch.Start();
+            //int timer = 60000;
+            
+            //int elapsed = watch.Elapsed.Milliseconds;
+            
+            //while (true)
+            //{
+            //    int elapsedGameTime = watch.Elapsed.Milliseconds - elapsed;
 
-                if (elapsedGameTime > 5)
+            //    if (elapsedGameTime > 5)
+            //    {
+            //        //float x = direction.X * momentum;
+            //        //float y = direction.Y * momentum;
+            //        //Vector2 move = new Vector2(x, y);
+            //        //momentum *= 0.9999999f;
+            //        //elapsed = elapsedGameTime;
+            //        ////position += move;
+            //        //posX += x;
+            //        //posY += y;
+
+            //    } 
+            //}
+        }
+
+        public void SetVelocity(Vector2 direction, float force)
+        {
+            velocity = direction * force;
+        }
+
+        private void Work()
+        {
+            bool working = true;
+            while(working)
+            {
+                foreach (Ball b in balls)
                 {
-                    //float x = direction.X * momentum;
-                    //float y = direction.Y * momentum;
-                    //Vector2 move = new Vector2(x, y);
-                    //momentum *= 0.9999999f;
-                    //elapsed = elapsedGameTime;
-                    ////position += move;
-                    //posX += x;
-                    //posY += y;
-
-                } 
+                    if(b != this)
+                    {
+                        if (BallManager.CheckCollision(this, b))
+                        {
+                            velocity *= -1;
+                        } 
+                    }
+                       
+                }
             }
         }
 

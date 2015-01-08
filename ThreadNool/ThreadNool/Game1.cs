@@ -66,16 +66,16 @@ namespace ThreadNool
             TableTexture = Content.Load<Texture2D>("PoolTableReferenceTop");
             Pixel = Content.Load<Texture2D>("pixel");
             balls = new List<Ball>();
-            balls.Add(new Ball(new Vector2(80, 120), Color.Red));
-            balls.Add(new Ball(new Vector2(80, 160), Color.Red));
-            balls.Add(new Ball(new Vector2(80, 200), Color.Red));
-            balls.Add(new Ball(new Vector2(80, 240), Color.Red));
+            balls.Add(new Ball(new Vector2(80, 120), Color.Red, balls));
+            balls.Add(new Ball(new Vector2(80, 160), Color.Red, balls));
+            balls.Add(new Ball(new Vector2(80, 200), Color.Red, balls));
+            balls.Add(new Ball(new Vector2(80, 240), Color.Red, balls));
 
 
-            balls.Add(new Ball(new Vector2(500, 120), Color.Blue));
-            balls.Add(new Ball(new Vector2(500, 160), Color.Blue));
-            balls.Add(new Ball(new Vector2(500, 200), Color.Blue));
-            balls.Add(new Ball(new Vector2(500, 240), Color.Blue));
+            balls.Add(new Ball(new Vector2(500, 120), Color.Blue, balls));
+            balls.Add(new Ball(new Vector2(500, 160), Color.Blue, balls));
+            balls.Add(new Ball(new Vector2(500, 200), Color.Blue, balls));
+            balls.Add(new Ball(new Vector2(500, 240), Color.Blue, balls));
 
             Table.Setup();
            
@@ -112,9 +112,11 @@ namespace ThreadNool
                     {
                         Vector2 newDir = new Vector2(clickPos.X - currentlySelectedBall.GetCenter().X, clickPos.Y - currentlySelectedBall.GetCenter().Y);
                         newDir.Normalize();
-                        currentlySelectedBall.Direction = newDir;
-                        Thread t1 = new Thread(currentlySelectedBall.MoveOnThread);
-                        t1.Start();
+                        float force = 0.9f;
+                        currentlySelectedBall.SetVelocity(newDir, force);
+                        //Thread t1 = new Thread(currentlySelectedBall.MoveOnThread);
+                        //t1.Start();
+                        currentlySelectedBall.MoveOnThread();
                         currentlySelectedBall = null;
                     }
                 }
