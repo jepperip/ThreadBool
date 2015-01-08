@@ -9,6 +9,7 @@ namespace ThreadNool
 {
     class Table
     {
+        static readonly bool drawHitboxes = true;
         Texture2D texture;
         Rectangle drawRectangle;
         List<Rectangle> holes = new List<Rectangle>();
@@ -65,14 +66,19 @@ namespace ThreadNool
         public void Draw(SpriteBatch s)
         {
             s.Draw(Game1.TableTexture, drawRectangle, Color.White);
-            foreach (Rectangle r in holes)
+            if(drawHitboxes)
             {
-                s.Draw(Game1.Pixel, r, Color.Red);
+                foreach (Rectangle r in holes)
+                {
+                    s.Draw(Game1.Pixel, r, Color.Red);
+                }
+                foreach (Rectangle r in borders)
+                {
+                    s.Draw(Game1.Pixel, r, Color.PowderBlue);
+                }
+
             }
-            foreach (Rectangle r in borders)
-            {
-                s.Draw(Game1.Pixel, r, Color.PowderBlue);
-            }
+            
         }
 
     }
