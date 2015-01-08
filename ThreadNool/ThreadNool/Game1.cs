@@ -76,6 +76,16 @@ namespace ThreadNool
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
+            foreach(Ball b1 in balls)
+            {
+                foreach(Ball b2 in balls)
+                {
+                    if (b1 != b2 && BallManager.CheckCollision(b1, b2))
+                    {
+                        bool collision = true;
+                    }
+                }
+            }
 
             base.Update(gameTime);
         }

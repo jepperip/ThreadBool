@@ -9,27 +9,29 @@ namespace ThreadNool
 {
     class Ball
     {
-      int radius;
-      Vector2 position;
-      Texture2D texture;
-      Color color;
+        int radius;
+        Vector2 position;
+        Texture2D texture;
+        Color color;
 
-      public Ball(Vector2 initPos, Color color)
-      {
-        radius = 16;
-        position = initPos;
-        this.color = color;
-        texture = Game1.BallTexture;
-      }
+        public int Radius { get { return radius; } }
+        public Vector2 Position { get { return position; } }
+        public Ball(Vector2 initPos, Color color)
+        {
+            radius = 16;
+            position = initPos;
+            this.color = color;
+            texture = Game1.BallTexture;
+        }
 
-      public Vector2 GetCenter()
-      {
-        return new Vector2(position.X + radius, position.Y + radius);
-      }
+        public Vector2 GetCenter()
+        {
+            return new Vector2(position.X + radius, position.Y + radius);
+        }
 
-      public void Draw(SpriteBatch sb)
-      {
-        sb.Draw(texture, position, color);
-      }
+        public void Draw(SpriteBatch sb)
+        {
+            sb.Draw(texture, position, color);
+        }
     }
 }
