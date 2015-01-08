@@ -88,10 +88,11 @@ namespace ThreadNool
 
         public void MoveOnThread()
         {
-            if(task.IsCompleted)
+            if(task.Status != TaskStatus.Running)
             {
                 task.Start();
             }
+            
             //System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
             //watch.Start();
             //int timer = 60000;
@@ -138,6 +139,8 @@ namespace ThreadNool
                     }
                        
                 }
+
+                Table.CollidedWithBorder(this);
             }
         }
 
