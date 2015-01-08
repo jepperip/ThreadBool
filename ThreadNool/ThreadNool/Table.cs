@@ -82,16 +82,16 @@ namespace ThreadNool
         /// </summary>
         /// <param name="b">The ball to test with</param>
         /// <returns>True if the ball has collided with any borders</returns>
-        public static bool CollidedWithBorder(Ball b)
+        public static Rectangle? CollidedWithBorder(Ball b)
         {
             foreach (Rectangle r in borders)
             {
                 if(Collision(b, r))
                 {
-                    return true;
+                    return r;
                 }
             }
-            return false;
+            return null;
         }
 
         /// <summary>

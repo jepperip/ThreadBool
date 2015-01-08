@@ -72,9 +72,7 @@ namespace ThreadNool
             }
             position += velocity;
             velocity *= falloff;
-
-            
-            
+           
         }
 
         public bool ClickedOn(Point clickPos)
@@ -142,7 +140,7 @@ namespace ThreadNool
         private void Work()
         {
             bool working = true;
-            while(velocity.Length() > 0.1f)
+            while(velocity.Length() > 0.0001f)
             {
                 foreach (Ball b in balls)
                 {
@@ -165,16 +163,13 @@ namespace ThreadNool
                         } 
                     }      
                 }
-
-                if(Table.CollidedWithBorder(this))
+                Rectangle? wall = Table.CollidedWithBorder(this);
+                if(wall != null)
                 {
-                    float oldX = velocity.X;
-                    velocity.X = -velocity.Y;
-                    velocity.Y = oldX;
-                    //velocity *= -1;
+                    HandleWallCollision(wall ?? Rectangle.Empty);
                 }
             }
-            SetVelocity(Vector2.Zero, 0);
+            //SetVelocity(Vector2.Zero, 0);
             working = false;
             task = new Task(new Action(Work));
         }
@@ -182,7 +177,7 @@ namespace ThreadNool
         /// <summary>
         /// Ball-to-Ball Collision
         /// </summary>
-        public Vector2 HandleBallCollision(Ball b)
+        private Vector2 HandleBallCollision(Ball b)
         {
             Vector2 otherVel = b.Velocity;
             if (b.Velocity.X == 0 && b.Velocity.Y == 0)
@@ -197,6 +192,21 @@ namespace ThreadNool
 
             SetVelocity(new Vector2(newVelX1, newVelY1));
             return new Vector2(newVelX2, newVelY2);
+
+        }
+
+        private void HandleWallCollision(Rectangle wall)
+        {
+            float oldX = velocity.X;
+            velocity.X = -velocity.Y;
+            velocity.Y = oldX;
+
+            float closestX = MathHelper.Clamp(Position.X, wall.Left, wall.Right);
+            float closestY = MathHelper.Clamp(Position.Y, wall.Top, wall.Bottom);
+
+            float a = Math.Abs(Position.X - closestX);
+            float b = Math.Abs(Position.Y - closestY);
+
 
         }
 
