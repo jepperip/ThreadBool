@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace ThreadNool
 {
@@ -171,8 +172,16 @@ namespace ThreadNool
         private void Work()
         {
             bool working = true;
-            while(velocity.Length() > 0.0001f)
+            while(working && velocity.Length() > 0.0001f)
             {
+                if (Table.CollidedWithHole(this))
+                {
+                    working = false;
+                    isActive = false;
+                    position.X = -55;
+                    position.Y = -55;
+                    break;
+                }
                 foreach (Ball b in balls)
                 {
                     if(b != this)
@@ -197,13 +206,8 @@ namespace ThreadNool
                 Rectangle? wall = Table.CollidedWithBorder(this);
                 if(wall != null)
                 {
+                    Debug.WriteLine("NEIN");
                     HandleWallCollision(wall ?? Rectangle.Empty);
-                }
-
-                if (Table.CollidedWithHole(this))
-                {
-                    working = false;
-                    isActive = false;
                 }
             }
             //SetVelocity(Vector2.Zero, 0);

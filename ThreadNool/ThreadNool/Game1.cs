@@ -117,8 +117,6 @@ namespace ThreadNool
                         newDir.Normalize();
                         float force = 3.5f;
                         currentlySelectedBall.SetVelocity(newDir, force);
-                        //Thread t1 = new Thread(currentlySelectedBall.MoveOnThread);
-                        //t1.Start();
                         currentlySelectedBall.MoveOnThread();
                         currentlySelectedBall = null;
                         firstClick = !firstClick;
