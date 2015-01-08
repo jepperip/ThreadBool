@@ -138,7 +138,7 @@ namespace ThreadNool
         private void Work()
         {
             bool working = true;
-            while(working)
+            while(velocity.Length() > 0.1f)
             {
                 foreach (Ball b in balls)
                 {
@@ -153,8 +153,7 @@ namespace ThreadNool
                             }
                             b.Puff(responseVel); 
                         } 
-                    }
-                       
+                    }      
                 }
 
                 if(Table.CollidedWithBorder(this))
@@ -165,6 +164,9 @@ namespace ThreadNool
                     //velocity *= -1;
                 }
             }
+            SetVelocity(Vector2.Zero, 0);
+            working = false;
+            task = new Task(new Action(Work));
         }
 
         /// <summary>
