@@ -113,6 +113,8 @@ namespace ThreadNool
             if(task.Status != TaskStatus.Running && task.Status != TaskStatus.WaitingToRun && task.Status != TaskStatus.WaitingForActivation)
             {
                 task.Start();
+                Debug.WriteLine("Task " + task.Id + " has started");
+                
             }
             
             //System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
