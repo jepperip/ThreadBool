@@ -16,7 +16,7 @@ namespace ThreadNool
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
-        public static readonly int ScreenWidth = 800, ScreenHeight = 600;
+        public static readonly int ScreenWidth = 800, ScreenHeight = (int)(ScreenWidth * 0.54795f);
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
@@ -90,9 +90,10 @@ namespace ThreadNool
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
+            table.Draw(spriteBatch);
             foreach (Ball ball in balls)
                 ball.Draw(spriteBatch);
-            table.Draw(spriteBatch);
+            
             spriteBatch.End();
             base.Draw(gameTime);
         }
