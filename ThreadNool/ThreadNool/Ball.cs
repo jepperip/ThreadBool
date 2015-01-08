@@ -108,38 +108,17 @@ namespace ThreadNool
             return false;
         }
 
-        public void MoveOnThread()
+        /// <summary>
+        /// If not already started, starts the task which performs the collision-handling
+        /// </summary>
+        public void StartBallThread()
         {
             if(task.Status != TaskStatus.Running && task.Status != TaskStatus.WaitingToRun && task.Status != TaskStatus.WaitingForActivation)
             {
                 task.Start();
-                Debug.WriteLine("Task " + task.Id + " has started");
-                
+                Debug.WriteLine("Task " + task.Id + " has started");              
             }
-            
-            //System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
-            //watch.Start();
-            //int timer = 60000;
-            
-            //int elapsed = watch.Elapsed.Milliseconds;
-            
-            //while (true)
-            //{
-            //    int elapsedGameTime = watch.Elapsed.Milliseconds - elapsed;
 
-            //    if (elapsedGameTime > 5)
-            //    {
-            //        //float x = direction.X * momentum;
-            //        //float y = direction.Y * momentum;
-            //        //Vector2 move = new Vector2(x, y);
-            //        //momentum *= 0.9999999f;
-            //        //elapsed = elapsedGameTime;
-            //        ////position += move;
-            //        //posX += x;
-            //        //posY += y;
-
-            //    } 
-            //}
         }
 
         /// <summary>
@@ -165,12 +144,25 @@ namespace ThreadNool
             this.velocity = velocity;
         }
 
+        /// <summary>
+        /// Knocks the ball in the direction and magnitude of the provided vector.
+        /// Starts the collision-deteection task.
+        /// </summary>
+        /// <param name="vel">Velocity to knock the ball with</param>
         public void Puff(Vector2 vel)
         {
             SetVelocity(vel);
-            MoveOnThread();
+            StartBallThread();
         }
 
+        /// <summary>
+        /// Represents work for a task to do.
+        /// The work consists of checking and handling collisions for a ball.
+        /// There are two types of collisions the method resolves: circle-to-circle and
+        /// circle-to-rectangle.
+        /// If and when the ball has a velocity lower than a threshold value the work
+        /// is considered done and the loop stops and releases the task.
+        /// </summary>
         private void Work()
         {
             bool working = true;
@@ -218,8 +210,10 @@ namespace ThreadNool
         }
 
         /// <summary>
-        /// Ball-to-Ball Collision
+        /// Circle-to-circle collision handling
         /// </summary>
+        /// <param name="b">The ball this ball has collided with</param>
+        /// <returns>A new velocity wich is the velocity the ball 'b' should use after the collision has been resolved</returns>
         private Vector2 HandleBallCollision(Ball b)
         {
             Vector2 otherVel = b.Velocity;
@@ -238,6 +232,10 @@ namespace ThreadNool
 
         }
 
+        /// <summary>
+        /// Circle-to-rectangle collision handling
+        /// </summary>
+        /// <param name="wall">A rectangle to responde to</param>
         private void HandleWallCollision(Rectangle wall)
         {
             //float oldX = velocity.X;
@@ -295,56 +293,6 @@ namespace ThreadNool
 
         }
 
-        ///// <summary>
-        ///// Ball-to-Wall Collision
-        ///// </summary>
-        //public void HandleIt(Ball collisionBall, Wall wall, float closestX, float closestY)
-        //{
-        //    if (closestY == collisionBall.position.Y)
-        //    {
-        //        float Overlap = Math.Abs(collisionBall.position.X - closestX);
-        //        //Korrigerar om cirkeln är i väggen
-        //        if (Overlap < collisionBall.radius)
-        //        {
-        //            float OverlapCorrection = collisionBall.position.X - closestX;
-        //            if (OverlapCorrection > 0)
-        //            {
-        //                collisionBall.position.X += collisionBall.radius - OverlapCorrection;
-        //            }
-        //            else
-        //                collisionBall.position.X += (OverlapCorrection + collisionBall.radius) * -1;
-        //        }
-        //        float Y = collisionBall.Velocity.Y * wall.friction;
-        //        float X = -collisionBall.Velocity.X * (wall.elasticity * collisionBall.elasticity);
-        //        //V = -eu
-        //        collisionBall.SetVelocity(new Vector2(X, Y));
-        //    }
-        //    else
-        //    {
-        //        float Overlap = Math.Abs(collisionBall.position.Y - closestY);
-        //        //Korrigerar om cirkeln är i väggen
-        //        if (Overlap < collisionBall.radius)
-        //        {
-        //            float OverlapCorrection = collisionBall.position.Y - closestY;
-        //            if (OverlapCorrection > 0)
-        //            {
-        //                collisionBall.position.Y += collisionBall.radius - OverlapCorrection;
-        //            }
-        //            else
-        //            {
-        //                collisionBall.position.Y += (OverlapCorrection + collisionBall.radius) * -1;
-        //            }
-        //        }
-
-        //        float X = collisionBall.Velocity.X * wall.friction;
-        //        float Y = -collisionBall.Velocity.Y * (wall.elasticity * collisionBall.elasticity);
-        //        //V = -eu
-        //        collisionBall.SetVelocity(new Vector2(X, Y));
-
-        //    }
-        //    collisionBall.angleVelocity = collisionBall.Velocity.Length() / collisionBall.radius * Math.Sign(collisionBall.Velocity.X);
-        //}
-
         /// <summary>
         /// Draws the ball onto the screen
         /// </summary>
@@ -352,10 +300,8 @@ namespace ThreadNool
         public void Draw(SpriteBatch sb)
         {
             if(isActive)
-            sb.Draw(texture, position, color);
-            
+            sb.Draw(texture, position, color);         
         }
-        object myLock = new Object();
 
     }
 }

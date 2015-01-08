@@ -10,10 +10,12 @@ using System.Text;
 
 namespace ThreadNool
 {
+    /// <summary>
+    /// This class represents one pool table.
+    /// </summary>
     static class Table
     {
-        static readonly bool drawHitboxes = true;
-        static Texture2D texture;
+        static readonly bool drawHitboxes = false;
         static Rectangle drawRectangle;
         static List<Rectangle> holes = new List<Rectangle>();
         static List<Rectangle> borders = new List<Rectangle>();
@@ -26,12 +28,9 @@ namespace ThreadNool
        
         /// <summary>
         /// Creates the table
-        /// </summary>
-       
+        /// </summary>       
         public static void Setup()
         {
-            texture = Game1.TableTexture;
-
             drawRectangle = new Rectangle(0, 0, Game1.ScreenWidth, Game1.ScreenHeight);
             CreateHoles();
             CreateBorders();
@@ -69,7 +68,6 @@ namespace ThreadNool
             topRight = new Rectangle(centerTop.Right, 0, cornerBottomRight.Left - centerTop.Right, borderWidth);
             bottomLeft = new Rectangle(cornerTopLeft.Right, Game1.ScreenHeight - borderWidth, centerTop.Left - cornerTopLeft.Right, borderWidth);
             bottomRight = new Rectangle(centerTop.Right, Game1.ScreenHeight - borderWidth, cornerBottomRight.Left - centerTop.Right, borderWidth);
-
             borders.Add(left);
             borders.Add(right);
             borders.Add(topLeft);

@@ -23,12 +23,11 @@ namespace ThreadNool
 
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        List<Ball> balls;
+        List<Ball> balls = new List<Ball>();
         MouseState previousMouseState;
         MouseState currentMouseState;
         Ball currentlySelectedBall;
         bool firstClick = true;
-
         public static Texture2D BallTexture, TableTexture, Pixel;
 
         public Game1()
@@ -48,10 +47,8 @@ namespace ThreadNool
             IsMouseVisible = true;
             graphics.PreferredBackBufferHeight = ScreenHeight;
             graphics.PreferredBackBufferWidth = ScreenWidth;
-            //graphics.SynchronizeWithVerticalRetrace = false;
             graphics.ApplyChanges();
-            base.Initialize();
-            
+            base.Initialize();          
         }
 
         /// <summary>
@@ -65,20 +62,18 @@ namespace ThreadNool
             BallTexture = Content.Load<Texture2D>("ball");
             TableTexture = Content.Load<Texture2D>("PoolTableReferenceTop");
             Pixel = Content.Load<Texture2D>("pixel");
-            balls = new List<Ball>();
-            balls.Add(new Ball(new Vector2(80, 120), Color.Red, balls));
-            balls.Add(new Ball(new Vector2(80, 160), Color.Red, balls));
-            balls.Add(new Ball(new Vector2(80, 200), Color.Red, balls));
-            balls.Add(new Ball(new Vector2(80, 240), Color.Red, balls));
 
+            balls.Add(new Ball(new Vector2(80, 120), Color.MediumVioletRed, balls));
+            balls.Add(new Ball(new Vector2(80, 160), Color.IndianRed, balls));
+            balls.Add(new Ball(new Vector2(80, 200), Color.MediumVioletRed, balls));
+            balls.Add(new Ball(new Vector2(80, 240), Color.MistyRose, balls));
 
             balls.Add(new Ball(new Vector2(500, 120), Color.Blue, balls));
-            balls.Add(new Ball(new Vector2(500, 160), Color.Blue, balls));
-            balls.Add(new Ball(new Vector2(500, 200), Color.Blue, balls));
-            balls.Add(new Ball(new Vector2(500, 240), Color.Blue, balls));
+            balls.Add(new Ball(new Vector2(500, 160), Color.DeepSkyBlue, balls));
+            balls.Add(new Ball(new Vector2(500, 200), Color.CornflowerBlue, balls));
+            balls.Add(new Ball(new Vector2(500, 240), Color.DarkBlue, balls));
 
-            Table.Setup();
-           
+            Table.Setup();          
         }
 
         /// <summary>
@@ -117,7 +112,7 @@ namespace ThreadNool
                         newDir.Normalize();
                         float force = 3.5f;
                         currentlySelectedBall.SetVelocity(newDir, force);
-                        currentlySelectedBall.MoveOnThread();
+                        currentlySelectedBall.StartBallThread();
                         currentlySelectedBall = null;
                         firstClick = !firstClick;
                     }
@@ -131,20 +126,7 @@ namespace ThreadNool
             foreach (Ball b1 in balls)
             {
                 b1.Update(clickPos);
-                //foreach (Ball b2 in balls)
-                //{
-                //    if (b1 != b2 && BallManager.CheckCollision(b1, b2))
-                //    {
-                //        bool collision = true;
-                //    }
-
-                //}
-                //if (Table.CollidedWithBorder(b1))
-                //{
-                //    bool collision = true;
-                //}
             }
-
             base.Update(gameTime);
         }
 
@@ -154,19 +136,13 @@ namespace ThreadNool
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Draw(GameTime gameTime)
         {
-            GraphicsDevice.Clear(Color.CornflowerBlue);
-
+            GraphicsDevice.Clear(Color.DarkBlue);
             spriteBatch.Begin();
             Table.Draw(spriteBatch);
             foreach (Ball ball in balls)
                 ball.Draw(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);
-        }
-
-        private void Test()
-        {
-
         }
     }
 }
