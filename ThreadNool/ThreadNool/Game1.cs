@@ -45,12 +45,13 @@ namespace ThreadNool
         /// </summary>
         protected override void Initialize()
         {
-            this.IsFixedTimeStep = false;
             IsMouseVisible = true;
             graphics.PreferredBackBufferHeight = ScreenHeight;
             graphics.PreferredBackBufferWidth = ScreenWidth;
+            //graphics.SynchronizeWithVerticalRetrace = false;
             graphics.ApplyChanges();
             base.Initialize();
+            
         }
 
         /// <summary>
@@ -75,7 +76,9 @@ namespace ThreadNool
             balls.Add(new Ball(new Vector2(500, 160), Color.Blue));
             balls.Add(new Ball(new Vector2(500, 200), Color.Blue));
             balls.Add(new Ball(new Vector2(500, 240), Color.Blue));
+
             Table.Setup();
+           
         }
 
         /// <summary>
@@ -117,25 +120,26 @@ namespace ThreadNool
                 }
                 firstClick = !firstClick;
             }
+
             // Allows the game to exit
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
-            foreach(Ball b1 in balls)
+            foreach (Ball b1 in balls)
             {
                 b1.Update(clickPos);
-                foreach(Ball b2 in balls)
-                {
-                    if (b1 != b2 && BallManager.CheckCollision(b1, b2))
-                    {
-                        bool collision = true;
-                    }
+                //foreach (Ball b2 in balls)
+                //{
+                //    if (b1 != b2 && BallManager.CheckCollision(b1, b2))
+                //    {
+                //        bool collision = true;
+                //    }
 
-                }
-                if (Table.CollidedWithBorder(b1))
-                {
-                    bool collision = true;
-                }
+                //}
+                //if (Table.CollidedWithBorder(b1))
+                //{
+                //    bool collision = true;
+                //}
             }
 
             base.Update(gameTime);
@@ -149,12 +153,10 @@ namespace ThreadNool
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
             spriteBatch.Begin();
             Table.Draw(spriteBatch);
             foreach (Ball ball in balls)
                 ball.Draw(spriteBatch);
-            
             spriteBatch.End();
             base.Draw(gameTime);
         }

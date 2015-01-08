@@ -6,6 +6,7 @@ using System.Linq;
 using System.Text;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System.Threading;
 
 namespace ThreadNool
 {
@@ -16,6 +17,7 @@ namespace ThreadNool
         Texture2D texture;
         Color color, initialColor;
         bool selected = false;
+        //public GameTime GameTime { private get; set; }
 
         public int Radius { get { return radius; } }
         public Vector2 Position { get { return position; } }
@@ -75,17 +77,40 @@ namespace ThreadNool
 
         public void MoveOnThread()
         {
+            System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
+            watch.Start();
             int timer = 60000;
+            int elapsed = watch.Elapsed.Milliseconds;
+            float x = direction.X * 0.00005f;
+            float y = direction.Y * 0.00005f;
+            Vector2 move = new Vector2(x, y);
             while (true)
             {
-                position += direction * 0.00002f;
-                timer--;
+                int elapsedGameTime = watch.Elapsed.Milliseconds - elapsed;
+
+                if (elapsedGameTime > 5)
+                {
+                    
+                    elapsed = elapsedGameTime;
+                }
+                lock (myLock)
+                {
+                    position += move;
+                }
+  
             }
         }
 
         public void Draw(SpriteBatch sb)
         {
-            sb.Draw(texture, position, color);
+            lock (myLock)
+            {
+                sb.Draw(texture, position, color);
+            }
+            
         }
+
+        object myLock = new Object();
+
     }
 }
