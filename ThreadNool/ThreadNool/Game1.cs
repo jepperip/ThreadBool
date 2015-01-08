@@ -19,6 +19,7 @@ namespace ThreadNool
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         List<Ball> balls;
+        Table table;
 
         public static Texture2D BallTexture, TableTexture;
 
@@ -55,6 +56,8 @@ namespace ThreadNool
             balls.Add(new Ball(new Vector2(60, 20), Color.Red));
             balls.Add(new Ball(new Vector2(60, 60), Color.Blue));
             balls.Add(new Ball(new Vector2(20, 60), Color.Green));
+
+            table = new Table();
         }
 
         /// <summary>
@@ -82,10 +85,9 @@ namespace ThreadNool
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-
             foreach (Ball ball in balls)
                 ball.Draw(spriteBatch);
-
+            table.Draw(spriteBatch);
             spriteBatch.End();
             base.Draw(gameTime);
         }
