@@ -77,12 +77,18 @@ namespace ThreadNool
             return false;
         }
 
+        /// <summary>
+        /// Checks if a ball(circle) has colided with a rectangle
+        /// </summary>
+        /// <param name="b">The circle</param>
+        /// <param name="r">The rectangle</param>
+        /// <returns></returns>
         private static bool Collision(Ball b, Rectangle r)
         {
-            float closestX = MathHelper.Clamp(b.Position.X, r.Left, r.Right);
-            float closestY = MathHelper.Clamp(b.Position.Y, r.Top, r.Bottom);
-            float distanceX = b.Position.X - closestX;
-            float distanceY = b.Position.Y - closestY;
+            float closestX = MathHelper.Clamp(b.GetCenter().X, r.Left, r.Right);
+            float closestY = MathHelper.Clamp(b.GetCenter().Y, r.Top, r.Bottom);
+            float distanceX = b.GetCenter().X - closestX;
+            float distanceY = b.GetCenter().Y - closestY;
             return distanceX * distanceX + distanceY * distanceY < b.Radius * b.Radius;
         }
 
