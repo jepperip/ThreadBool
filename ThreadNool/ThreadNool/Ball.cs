@@ -15,7 +15,7 @@ namespace ThreadNool
     {
         int radius;
         Vector2 position, direction, velocity;
-        float falloff = 0.998f;
+        float falloff = 0.997f;
         Texture2D texture;
         Color color, initialColor;
         bool selected = false;
@@ -159,10 +159,10 @@ namespace ThreadNool
 
                 if(Table.CollidedWithBorder(this))
                 {
-                    //float oldX = velocity.X;
-                    //velocity.X = velocity.Y;
-                    //velocity.Y = oldX;
-                    velocity *= -1;
+                    float oldX = velocity.X;
+                    velocity.X = -velocity.Y;
+                    velocity.Y = oldX;
+                    //velocity *= -1;
                 }
             }
         }
@@ -172,13 +172,10 @@ namespace ThreadNool
         /// </summary>
         public Vector2 HandleBallCollision(Ball b)
         {
-            float massMinusBMass = mass - b.mass;
-            float bMassMinusMass = b.mass - mass;
-
-            float newVelX1 = (Velocity.X * (massMinusBMass) + (2 * b.mass * b.Velocity.X)) / (mass + b.mass);
-            float newVelY1 = (Velocity.Y * (massMinusBMass) + (2 * b.mass * b.Velocity.Y)) / (mass + b.mass);
-            float newVelX2 = (b.Velocity.X * (bMassMinusMass) + (2 * mass * Velocity.X)) / (mass + b.mass);
-            float newVelY2 = (b.Velocity.Y * (bMassMinusMass) + (2 * mass * Velocity.Y)) / (mass + b.mass);
+            float newVelX1 = (Velocity.X * (mass - b.mass) + (2 * b.mass * b.Velocity.X)) / (mass + b.mass);
+            float newVelY1 = (Velocity.Y * (mass - b.mass) + (2 * b.mass * b.Velocity.Y)) / (mass + b.mass);
+            float newVelX2 = (b.Velocity.X * (b.mass - mass) + (2 * mass * Velocity.X)) / (mass + b.mass);
+            float newVelY2 = (b.Velocity.Y * (b.mass - mass) + (2 * mass * Velocity.Y)) / (mass + b.mass);
 
             SetVelocity(new Vector2(newVelX1, newVelY1));
             return new Vector2(newVelX2, newVelY2);
