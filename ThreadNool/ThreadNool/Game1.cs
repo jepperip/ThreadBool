@@ -16,6 +16,8 @@ namespace ThreadNool
     /// </summary>
     public class Game1 : Microsoft.Xna.Framework.Game
     {
+        public static readonly int ScreenWidth = 800, ScreenHeight = 600;
+
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         Table table;
@@ -36,8 +38,10 @@ namespace ThreadNool
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-
+            IsMouseVisible = true;
+            graphics.PreferredBackBufferHeight = ScreenHeight;
+            graphics.PreferredBackBufferWidth = ScreenWidth;
+            graphics.ApplyChanges();
             base.Initialize();
         }
 

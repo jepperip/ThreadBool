@@ -6,10 +6,12 @@ namespace ThreadNool
     class Table
     {
         Texture2D texture;
+        Rectangle drawRectangle;
 
         public Table()
         {
             texture = Game1.TableTexture;
+            drawRectangle = new Rectangle(0, 0, Game1.ScreenWidth, Game1.ScreenHeight);
         }
 
         public void Update(GameTime gameTime)
@@ -19,7 +21,7 @@ namespace ThreadNool
 
         public void Draw(SpriteBatch s)
         {
-            s.Draw(Game1.TableTexture, Vector2.Zero, Color.White);
+            s.Draw(Game1.TableTexture, drawRectangle, Color.White);
         }
 
     }
