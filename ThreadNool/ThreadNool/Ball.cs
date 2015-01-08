@@ -121,11 +121,15 @@ namespace ThreadNool
 
         public void SetVelocity(Vector2 direction, float force)
         {
+            this.direction = direction;
+            direction.Normalize();
             velocity = direction * force;
         }
 
         public void SetVelocity(Vector2 velocity)
         {
+            direction = velocity;
+            direction.Normalize();
             this.velocity = velocity;
         }
 
@@ -147,10 +151,16 @@ namespace ThreadNool
                         if (BallManager.CheckCollision(this, b))
                         {
                             Vector2 responseVel = HandleBallCollision(b);
+
+                            float distance = Vector2.Distance(Position, b.Position);
+                            float overlap = (Radius * 2) - distance;
+                            Vector2 dir = b.Position - Position;
+                            dir.Normalize();
                             while (BallManager.CheckCollision(this, b))
                             {
-                                position += velocity;
+                                position -= dir * overlap;
                             }
+                            
                             b.Puff(responseVel); 
                         } 
                     }      
@@ -174,13 +184,20 @@ namespace ThreadNool
         /// </summary>
         public Vector2 HandleBallCollision(Ball b)
         {
-            float newVelX1 = (Velocity.X * (mass - b.mass) + (2 * b.mass * b.Velocity.X)) / (mass + b.mass);
-            float newVelY1 = (Velocity.Y * (mass - b.mass) + (2 * b.mass * b.Velocity.Y)) / (mass + b.mass);
-            float newVelX2 = (b.Velocity.X * (b.mass - mass) + (2 * mass * Velocity.X)) / (mass + b.mass);
-            float newVelY2 = (b.Velocity.Y * (b.mass - mass) + (2 * mass * Velocity.Y)) / (mass + b.mass);
+            Vector2 otherVel = b.Velocity;
+            if (b.Velocity.X == 0 && b.Velocity.Y == 0)
+            {
+                otherVel.X = -Velocity.X * 0.001f;
+                otherVel.Y = -Velocity.Y * 0.001f;
+            }
+            float newVelX1 = (Velocity.X * (mass - b.mass) + (2 * b.mass * otherVel.X)) / (mass + b.mass);
+            float newVelY1 = (Velocity.Y * (mass - b.mass) + (2 * b.mass * otherVel.Y)) / (mass + b.mass);
+            float newVelX2 = (otherVel.X * (b.mass - mass) + (2 * mass * Velocity.X)) / (mass + b.mass);
+            float newVelY2 = (otherVel.Y * (b.mass - mass) + (2 * mass * Velocity.Y)) / (mass + b.mass);
 
             SetVelocity(new Vector2(newVelX1, newVelY1));
             return new Vector2(newVelX2, newVelY2);
+
         }
 
         ///// <summary>
