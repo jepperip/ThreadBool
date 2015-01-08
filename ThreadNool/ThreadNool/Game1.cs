@@ -10,6 +10,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using System.Threading;
 
 namespace ThreadNool
 {
@@ -25,6 +26,7 @@ namespace ThreadNool
         List<Ball> balls;
         MouseState previousMouseState;
         MouseState currentMouseState;
+        Ball currentlySelectedBall;
         bool firstClick = true;
 
         public static Texture2D BallTexture, TableTexture, Pixel;
@@ -94,11 +96,22 @@ namespace ThreadNool
                 clickPos.Y = Mouse.GetState().Y;
                 if (firstClick)
                 {
-                    int blabla;
+                    foreach(Ball b in balls)
+                    {
+                        if (b.ClickedOn(clickPos))
+                            currentlySelectedBall = b;
+                    }
                 }
                 else
                 {
-                    int blublu;
+                    if(currentlySelectedBall != null)
+                    {
+                        Vector2 newDir = new Vector2(clickPos.X - currentlySelectedBall.GetCenter().X, clickPos.Y - currentlySelectedBall.GetCenter().Y);
+                        currentlySelectedBall.Direction = newDir;
+                        currentlySelectedBall.Direction.Normalize();
+                        Thread t1 = new Thread(currentlySelectedBall.MoveOnThread);
+                        t1.Start();
+                    }
                 }
                 firstClick = !firstClick;
             }

@@ -19,6 +19,8 @@ namespace ThreadNool
 
         public int Radius { get { return radius; } }
         public Vector2 Position { get { return position; } }
+
+        public Vector2 Direction { get { return direction; } set { direction = value; } }
         public Ball(Vector2 initPos, Color color)
         {
             radius = 16;
@@ -32,6 +34,7 @@ namespace ThreadNool
         {
             return new Vector2(position.X + radius, position.Y + radius);
         }
+
         /// <summary>
         /// Updates the ball. If the ball is not already selected it checks if the mouse was clicked inside of the ball, if so the state of the ball and the colour is changed to indicate selection
         /// Else the ball was previously selected and the direction where the ball is supposed to go is calculated. Lastly the direction is added on to the balls position.
@@ -58,8 +61,26 @@ namespace ThreadNool
                     direction.Normalize();
                 }
             }
+        }
 
-            position += direction * 3;
+        public bool ClickedOn(Point clickPos)
+        {
+            if (clickPos.X != -1 && clickPos.Y != -1)
+            {
+                Rectangle bounds = new Rectangle((int)position.X, (int)position.Y, 36, 36);
+                return bounds.Contains(clickPos);
+            }
+            return false;
+        }
+
+        public void MoveOnThread()
+        {
+            int timer = 6000000;
+            while (timer > 0)
+            {
+                position += direction * 0.00002f;
+                timer--;
+            }
         }
 
         public void Draw(SpriteBatch sb)
