@@ -21,9 +21,10 @@ namespace ThreadNool
         bool selected = false;
         Task task;
         List<Ball> balls;
-
+        public readonly float mass = 1.0f; //Ignore
         public int Radius { get { return radius; } }
         public Vector2 Position { get { return position; } }
+        public Vector2 Velocity { get { return velocity; } }
 
         public Vector2 Direction { get { return direction; } set { direction = value; } }
         public Ball(Vector2 initPos, Color color, List<Ball> balls)
@@ -88,7 +89,7 @@ namespace ThreadNool
 
         public void MoveOnThread()
         {
-            if(task.Status != TaskStatus.Running)
+            if(task.Status != TaskStatus.Running && task.Status != TaskStatus.WaitingToRun && task.Status != TaskStatus.WaitingForActivation)
             {
                 task.Start();
             }
@@ -123,6 +124,17 @@ namespace ThreadNool
             velocity = direction * force;
         }
 
+        public void SetVelocity(Vector2 velocity)
+        {
+            this.velocity = velocity;
+        }
+
+        public void Puff(Vector2 vel)
+        {
+            SetVelocity(vel);
+            MoveOnThread();
+        }
+
         private void Work()
         {
             bool working = true;
@@ -134,15 +146,93 @@ namespace ThreadNool
                     {
                         if (BallManager.CheckCollision(this, b))
                         {
-                            velocity *= -1;
+                            Vector2 responseVel = HandleBallCollision(b);
+                            while (BallManager.CheckCollision(this, b))
+                            {
+                                position += velocity;
+                            }
+                            b.Puff(responseVel); 
                         } 
                     }
                        
                 }
 
-                Table.CollidedWithBorder(this);
+                if(Table.CollidedWithBorder(this))
+                {
+                    //float oldX = velocity.X;
+                    //velocity.X = velocity.Y;
+                    //velocity.Y = oldX;
+                    velocity *= -1;
+                }
             }
         }
+
+        /// <summary>
+        /// Ball-to-Ball Collision
+        /// </summary>
+        public Vector2 HandleBallCollision(Ball b)
+        {
+            float massMinusBMass = mass - b.mass;
+            float bMassMinusMass = b.mass - mass;
+
+            float newVelX1 = (Velocity.X * (massMinusBMass) + (2 * b.mass * b.Velocity.X)) / (mass + b.mass);
+            float newVelY1 = (Velocity.Y * (massMinusBMass) + (2 * b.mass * b.Velocity.Y)) / (mass + b.mass);
+            float newVelX2 = (b.Velocity.X * (bMassMinusMass) + (2 * mass * Velocity.X)) / (mass + b.mass);
+            float newVelY2 = (b.Velocity.Y * (bMassMinusMass) + (2 * mass * Velocity.Y)) / (mass + b.mass);
+
+            SetVelocity(new Vector2(newVelX1, newVelY1));
+            return new Vector2(newVelX2, newVelY2);
+        }
+
+        ///// <summary>
+        ///// Ball-to-Wall Collision
+        ///// </summary>
+        //public void HandleIt(Ball collisionBall, Wall wall, float closestX, float closestY)
+        //{
+        //    if (closestY == collisionBall.position.Y)
+        //    {
+        //        float Overlap = Math.Abs(collisionBall.position.X - closestX);
+        //        //Korrigerar om cirkeln är i väggen
+        //        if (Overlap < collisionBall.radius)
+        //        {
+        //            float OverlapCorrection = collisionBall.position.X - closestX;
+        //            if (OverlapCorrection > 0)
+        //            {
+        //                collisionBall.position.X += collisionBall.radius - OverlapCorrection;
+        //            }
+        //            else
+        //                collisionBall.position.X += (OverlapCorrection + collisionBall.radius) * -1;
+        //        }
+        //        float Y = collisionBall.Velocity.Y * wall.friction;
+        //        float X = -collisionBall.Velocity.X * (wall.elasticity * collisionBall.elasticity);
+        //        //V = -eu
+        //        collisionBall.SetVelocity(new Vector2(X, Y));
+        //    }
+        //    else
+        //    {
+        //        float Overlap = Math.Abs(collisionBall.position.Y - closestY);
+        //        //Korrigerar om cirkeln är i väggen
+        //        if (Overlap < collisionBall.radius)
+        //        {
+        //            float OverlapCorrection = collisionBall.position.Y - closestY;
+        //            if (OverlapCorrection > 0)
+        //            {
+        //                collisionBall.position.Y += collisionBall.radius - OverlapCorrection;
+        //            }
+        //            else
+        //            {
+        //                collisionBall.position.Y += (OverlapCorrection + collisionBall.radius) * -1;
+        //            }
+        //        }
+
+        //        float X = collisionBall.Velocity.X * wall.friction;
+        //        float Y = -collisionBall.Velocity.Y * (wall.elasticity * collisionBall.elasticity);
+        //        //V = -eu
+        //        collisionBall.SetVelocity(new Vector2(X, Y));
+
+        //    }
+        //    collisionBall.angleVelocity = collisionBall.Velocity.Length() / collisionBall.radius * Math.Sign(collisionBall.Velocity.X);
+        //}
 
         public void Draw(SpriteBatch sb)
         {
