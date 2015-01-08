@@ -83,7 +83,7 @@ namespace ThreadNool
             float closestY = MathHelper.Clamp(b.Position.Y, r.Top, r.Bottom);
             float distanceX = b.Position.X - closestX;
             float distanceY = b.Position.Y - closestY;
-            return distanceX + distanceY < b.Radius;
+            return distanceX * distanceX + distanceY * distanceY < b.Radius * b.Radius;
         }
 
 
