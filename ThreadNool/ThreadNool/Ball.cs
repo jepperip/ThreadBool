@@ -19,6 +19,7 @@ namespace ThreadNool
         radius = 16;
         position = initPos;
         this.color = color;
+        texture = Game1.BallTexture;
       }
 
       public Vector2 GetCenter()
