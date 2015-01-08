@@ -160,5 +160,10 @@ namespace ThreadNool
             spriteBatch.End();
             base.Draw(gameTime);
         }
+
+        private void Test()
+        {
+
+        }
     }
 }

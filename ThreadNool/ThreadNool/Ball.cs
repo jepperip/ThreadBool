@@ -13,11 +13,11 @@ namespace ThreadNool
     class Ball
     {
         int radius;
-        Vector2 position, direction;
+        Vector2 position, direction, velocity;
+        float falloff = 0.9999998f;
         Texture2D texture;
         Color color, initialColor;
         bool selected = false;
-        //public GameTime GameTime { private get; set; }
 
         public int Radius { get { return radius; } }
         public Vector2 Position { get { return position; } }
@@ -30,6 +30,7 @@ namespace ThreadNool
             this.color = initialColor = color;
             texture = Game1.BallTexture;
             direction = Vector2.Zero;
+            velocity = Vector2.Zero;
         }
 
         public Vector2 GetCenter()
@@ -63,6 +64,9 @@ namespace ThreadNool
                     //direction.Normalize();
                 }
             }
+            position += velocity;
+            velocity *= falloff;
+            
         }
 
         public bool ClickedOn(Point clickPos)
@@ -80,33 +84,31 @@ namespace ThreadNool
             System.Diagnostics.Stopwatch watch = new System.Diagnostics.Stopwatch();
             watch.Start();
             int timer = 60000;
+            
             int elapsed = watch.Elapsed.Milliseconds;
-            float x = direction.X * 0.00005f;
-            float y = direction.Y * 0.00005f;
-            Vector2 move = new Vector2(x, y);
+            
             while (true)
             {
                 int elapsedGameTime = watch.Elapsed.Milliseconds - elapsed;
 
                 if (elapsedGameTime > 5)
                 {
-                    
-                    elapsed = elapsedGameTime;
-                }
-                lock (myLock)
-                {
-                    position += move;
-                }
-  
+                    //float x = direction.X * momentum;
+                    //float y = direction.Y * momentum;
+                    //Vector2 move = new Vector2(x, y);
+                    //momentum *= 0.9999999f;
+                    //elapsed = elapsedGameTime;
+                    ////position += move;
+                    //posX += x;
+                    //posY += y;
+
+                } 
             }
         }
 
         public void Draw(SpriteBatch sb)
         {
-            lock (myLock)
-            {
-                sb.Draw(texture, position, color);
-            }
+            sb.Draw(texture, position, color);
             
         }
 
