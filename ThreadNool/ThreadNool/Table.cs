@@ -11,7 +11,7 @@ namespace ThreadNool
 {
     static class Table
     {
-        static readonly bool drawHitboxes = false;
+        static readonly bool drawHitboxes = true;
         static Texture2D texture;
         static Rectangle drawRectangle;
         static List<Rectangle> holes = new List<Rectangle>();

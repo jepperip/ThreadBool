@@ -234,15 +234,57 @@ namespace ThreadNool
 
         private void HandleWallCollision(Rectangle wall)
         {
-            float oldX = velocity.X;
-            velocity.X = -velocity.Y;
-            velocity.Y = oldX;
+            //float oldX = velocity.X;
+            //velocity.X = -velocity.Y;
+            //velocity.Y = oldX;
 
-            float closestX = MathHelper.Clamp(Position.X, wall.Left, wall.Right);
-            float closestY = MathHelper.Clamp(Position.Y, wall.Top, wall.Bottom);
+            float closestX = MathHelper.Clamp(GetCenter().X, wall.Left, wall.Right);
+            float closestY = MathHelper.Clamp(GetCenter().Y, wall.Top, wall.Bottom);
 
-            float a = Math.Abs(Position.X - closestX);
-            float b = Math.Abs(Position.Y - closestY);
+            if (closestY == GetCenter().Y)
+            {
+                float Overlap = Math.Abs(GetCenter().X - closestX);
+                //Korrigerar om cirkeln är i väggen
+                if (Overlap < radius)
+                {
+                    float OverlapCorrection = GetCenter().X - closestX;
+                    if (OverlapCorrection > 0)
+                    {
+                        position.X += radius - OverlapCorrection;
+                    }
+                    else
+                        position.X += (OverlapCorrection + radius) * -1;
+                }
+                float Y = Velocity.Y;
+                float X = -Velocity.X;
+                //V = -eu
+                SetVelocity(new Vector2(X, Y));
+            }
+            else
+            {
+                float Overlap = Math.Abs(GetCenter().Y - closestY);
+                //Korrigerar om cirkeln är i väggen
+                if (Overlap < radius)
+                {
+                    float OverlapCorrection = GetCenter().Y - closestY;
+                    if (OverlapCorrection > 0)
+                    {
+                        position.Y += radius - OverlapCorrection;
+                    }
+                    else
+                    {
+                        position.Y += (OverlapCorrection + radius) * -1;
+                    }
+                }
+
+                float X = Velocity.X; ;
+                float Y = -Velocity.Y; ;
+                //V = -eu
+                SetVelocity(new Vector2(X, Y));
+
+            }
+
+            
 
 
         }
