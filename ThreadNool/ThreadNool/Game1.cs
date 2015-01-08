@@ -23,7 +23,7 @@ namespace ThreadNool
         List<Ball> balls;
         Table table;
 
-        public static Texture2D BallTexture, TableTexture;
+        public static Texture2D BallTexture, TableTexture, Pixel;
 
         public Game1()
         {
@@ -56,6 +56,7 @@ namespace ThreadNool
             spriteBatch = new SpriteBatch(GraphicsDevice);
             BallTexture = Content.Load<Texture2D>("ball");
             TableTexture = Content.Load<Texture2D>("PoolTableReferenceTop");
+            Pixel = Content.Load<Texture2D>("pixel");
             balls = new List<Ball>();
             balls.Add(new Ball(new Vector2(20, 20), Color.Black));
             balls.Add(new Ball(new Vector2(60, 20), Color.Red));
