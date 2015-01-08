@@ -19,6 +19,7 @@ namespace ThreadNool
         Texture2D texture;
         Color color, initialColor;
         bool selected = false;
+        bool isActive = true;
         Task task;
         List<Ball> balls;
         public readonly float mass = 1.0f; //Ignore
@@ -51,28 +52,30 @@ namespace ThreadNool
         /// <param name="clickPos">The point where the mouse was clicked</param>
         public void Update(Point clickPos)
         {
-            if (clickPos.X != -1 && clickPos.Y != -1)
+            if (isActive)
             {
-                if (!selected)
+                if (clickPos.X != -1 && clickPos.Y != -1)
                 {
-                    Rectangle bounds = new Rectangle((int)position.X, (int)position.Y, 36, 36);
-                    if (bounds.Contains(clickPos))
+                    if (!selected)
                     {
-                        selected = true;
-                        color = Color.White;
+                        Rectangle bounds = new Rectangle((int)position.X, (int)position.Y, 36, 36);
+                        if (bounds.Contains(clickPos))
+                        {
+                            selected = true;
+                            color = Color.White;
+                        }
+                    }
+                    else
+                    {
+                        selected = false;
+                        color = initialColor;
+                        //direction = new Vector2(clickPos.X - GetCenter().X, clickPos.Y - GetCenter().Y);
+                        //direction.Normalize();
                     }
                 }
-                else
-                {
-                    selected = false;
-                    color = initialColor;
-                    //direction = new Vector2(clickPos.X - GetCenter().X, clickPos.Y - GetCenter().Y);
-                    //direction.Normalize();
-                }
+                position += velocity;
+                velocity *= falloff;
             }
-            position += velocity;
-            velocity *= falloff;
-
             
             
         }
@@ -173,6 +176,12 @@ namespace ThreadNool
                     velocity.Y = oldX;
                     //velocity *= -1;
                 }
+
+                if (Table.CollidedWithHole(this))
+                {
+                    working = false;
+                    isActive = false;
+                }
             }
             SetVelocity(Vector2.Zero, 0);
             working = false;
@@ -252,6 +261,7 @@ namespace ThreadNool
 
         public void Draw(SpriteBatch sb)
         {
+            if(isActive)
             sb.Draw(texture, position, color);
             
         }
