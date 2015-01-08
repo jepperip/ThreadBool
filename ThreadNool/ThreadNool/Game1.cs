@@ -23,6 +23,10 @@ namespace ThreadNool
         List<Ball> balls;
         Table table;
 
+        MouseState previousMouseState;
+        MouseState currentMouseState;
+        bool firstClick = true;
+
         public static Texture2D BallTexture, TableTexture;
 
         public Game1()
@@ -57,11 +61,16 @@ namespace ThreadNool
             BallTexture = Content.Load<Texture2D>("ball");
             TableTexture = Content.Load<Texture2D>("PoolTableReferenceTop");
             balls = new List<Ball>();
-            balls.Add(new Ball(new Vector2(20, 20), Color.Black));
-            balls.Add(new Ball(new Vector2(60, 20), Color.Red));
-            balls.Add(new Ball(new Vector2(60, 60), Color.Blue));
-            balls.Add(new Ball(new Vector2(20, 60), Color.Green));
+            balls.Add(new Ball(new Vector2(80, 120), Color.Red));
+            balls.Add(new Ball(new Vector2(80, 160), Color.Red));
+            balls.Add(new Ball(new Vector2(80, 200), Color.Red));
+            balls.Add(new Ball(new Vector2(80, 240), Color.Red));
 
+
+            balls.Add(new Ball(new Vector2(500, 120), Color.Blue));
+            balls.Add(new Ball(new Vector2(500, 160), Color.Blue));
+            balls.Add(new Ball(new Vector2(500, 200), Color.Blue));
+            balls.Add(new Ball(new Vector2(500, 240), Color.Blue));
             table = new Table();
         }
 
@@ -72,12 +81,33 @@ namespace ThreadNool
         /// <param name="gameTime">Provides a snapshot of timing values.</param>
         protected override void Update(GameTime gameTime)
         {
+            previousMouseState = currentMouseState;
+            currentMouseState = Mouse.GetState();
+
+            //Point går inte att nulla, så vi får sätta det till något skitvärde och istället kolla så att man klickar innanför spelplanen typ
+            Point clickPos = new Point(-1,-1);
+            if(previousMouseState.LeftButton == ButtonState.Released && 
+                currentMouseState.LeftButton == ButtonState.Pressed)
+            {
+                clickPos.X = Mouse.GetState().X;
+                clickPos.Y = Mouse.GetState().Y;
+                if (firstClick)
+                {
+                    int blabla;
+                }
+                else
+                {
+                    int blublu;
+                }
+                firstClick = !firstClick;
+            }
             // Allows the game to exit
             if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
             foreach(Ball b1 in balls)
             {
+                b1.Update(clickPos);
                 foreach(Ball b2 in balls)
                 {
                     if (b1 != b2 && BallManager.CheckCollision(b1, b2))

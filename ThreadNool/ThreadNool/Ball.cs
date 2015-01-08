@@ -10,9 +10,10 @@ namespace ThreadNool
     class Ball
     {
         int radius;
-        Vector2 position;
+        Vector2 position, direction;
         Texture2D texture;
-        Color color;
+        Color color, initialColor;
+        bool selected = false;
 
         public int Radius { get { return radius; } }
         public Vector2 Position { get { return position; } }
@@ -20,13 +21,39 @@ namespace ThreadNool
         {
             radius = 16;
             position = initPos;
-            this.color = color;
+            this.color = initialColor = color;
             texture = Game1.BallTexture;
+            direction = Vector2.Zero;
         }
 
         public Vector2 GetCenter()
         {
             return new Vector2(position.X + radius, position.Y + radius);
+        }
+
+        public void Update(Point clickPos)
+        {
+            if (clickPos.X != -1 && clickPos.Y != -1)
+            {
+                if (!selected)
+                {
+                    Rectangle bounds = new Rectangle((int)position.X, (int)position.Y, 36, 36);
+                    if (bounds.Contains(clickPos))
+                    {
+                        selected = true;
+                        color = Color.White;
+                    }
+                }
+                else
+                {
+                    selected = false;
+                    color = initialColor;
+                    direction = new Vector2(clickPos.X - GetCenter().X, clickPos.Y - GetCenter().Y);
+                    direction.Normalize();
+                }
+            }
+
+            position += direction * 3;
         }
 
         public void Draw(SpriteBatch sb)
