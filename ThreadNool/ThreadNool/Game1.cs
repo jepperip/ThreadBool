@@ -18,6 +18,7 @@ namespace ThreadNool
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        List<Ball> balls;
 
         public static Texture2D BallTexture, TableTexture;
 
@@ -36,7 +37,6 @@ namespace ThreadNool
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-
             base.Initialize();
         }
 
@@ -48,9 +48,13 @@ namespace ThreadNool
         {
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            BallTexture = Content.Load<Texture2D>("ball.png");
+            BallTexture = Content.Load<Texture2D>("ball");
             TableTexture = Content.Load<Texture2D>("PoolTableReferenceTop");
-
+            balls = new List<Ball>();
+            balls.Add(new Ball(new Vector2(20, 20), Color.Black));
+            balls.Add(new Ball(new Vector2(60, 20), Color.Red));
+            balls.Add(new Ball(new Vector2(60, 60), Color.Blue));
+            balls.Add(new Ball(new Vector2(20, 60), Color.Green));
         }
 
         /// <summary>
@@ -79,6 +83,8 @@ namespace ThreadNool
             // TODO: Add your drawing code here
             spriteBatch.Begin();
 
+            foreach (Ball ball in balls)
+                ball.Draw(spriteBatch);
 
             spriteBatch.End();
             base.Draw(gameTime);
