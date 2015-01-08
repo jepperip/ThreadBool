@@ -57,8 +57,8 @@ namespace ThreadNool
                 {
                     selected = false;
                     color = initialColor;
-                    direction = new Vector2(clickPos.X - GetCenter().X, clickPos.Y - GetCenter().Y);
-                    direction.Normalize();
+                    //direction = new Vector2(clickPos.X - GetCenter().X, clickPos.Y - GetCenter().Y);
+                    //direction.Normalize();
                 }
             }
         }
@@ -75,8 +75,8 @@ namespace ThreadNool
 
         public void MoveOnThread()
         {
-            int timer = 6000000;
-            while (timer > 0)
+            int timer = 60000;
+            while (true)
             {
                 position += direction * 0.00002f;
                 timer--;

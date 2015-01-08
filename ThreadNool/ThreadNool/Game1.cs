@@ -45,6 +45,7 @@ namespace ThreadNool
         /// </summary>
         protected override void Initialize()
         {
+            this.IsFixedTimeStep = false;
             IsMouseVisible = true;
             graphics.PreferredBackBufferHeight = ScreenHeight;
             graphics.PreferredBackBufferWidth = ScreenWidth;
@@ -107,10 +108,11 @@ namespace ThreadNool
                     if(currentlySelectedBall != null)
                     {
                         Vector2 newDir = new Vector2(clickPos.X - currentlySelectedBall.GetCenter().X, clickPos.Y - currentlySelectedBall.GetCenter().Y);
+                        newDir.Normalize();
                         currentlySelectedBall.Direction = newDir;
-                        currentlySelectedBall.Direction.Normalize();
                         Thread t1 = new Thread(currentlySelectedBall.MoveOnThread);
                         t1.Start();
+                        currentlySelectedBall = null;
                     }
                 }
                 firstClick = !firstClick;
