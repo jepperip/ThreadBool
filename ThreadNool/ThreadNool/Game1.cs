@@ -21,7 +21,6 @@ namespace ThreadNool
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         List<Ball> balls;
-        Table table;
         MouseState previousMouseState;
         MouseState currentMouseState;
         bool firstClick = true;
@@ -71,7 +70,7 @@ namespace ThreadNool
             balls.Add(new Ball(new Vector2(500, 160), Color.Blue));
             balls.Add(new Ball(new Vector2(500, 200), Color.Blue));
             balls.Add(new Ball(new Vector2(500, 240), Color.Blue));
-            table = new Table();
+            Table.Setup();
         }
 
         /// <summary>
@@ -114,6 +113,11 @@ namespace ThreadNool
                     {
                         bool collision = true;
                     }
+
+                }
+                if (Table.CollidedWithBorder(b1))
+                {
+                    bool collision = true;
                 }
             }
 
@@ -130,7 +134,7 @@ namespace ThreadNool
 
             // TODO: Add your drawing code here
             spriteBatch.Begin();
-            table.Draw(spriteBatch);
+            Table.Draw(spriteBatch);
             foreach (Ball ball in balls)
                 ball.Draw(spriteBatch);
             
