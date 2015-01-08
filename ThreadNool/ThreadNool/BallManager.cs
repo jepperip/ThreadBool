@@ -10,7 +10,12 @@ namespace ThreadNool
 {
     static class BallManager
     {
-
+        /// <summary>
+        /// Checks for a collision between two balls.
+        /// </summary>
+        /// <param name="b1">The first ball</param>
+        /// <param name="b2">The second ball.</param>
+        /// <returns>True if a collision was found, false otherwise.</returns>
         public static bool CheckCollision(Ball b1, Ball b2)
         {
             double deltaX= b2.GetCenter().X - b1.GetCenter().X;

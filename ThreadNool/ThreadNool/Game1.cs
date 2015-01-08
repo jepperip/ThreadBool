@@ -115,7 +115,7 @@ namespace ThreadNool
                     {
                         Vector2 newDir = new Vector2(clickPos.X - currentlySelectedBall.GetCenter().X, clickPos.Y - currentlySelectedBall.GetCenter().Y);
                         newDir.Normalize();
-                        float force = 1.5f;
+                        float force = 3.5f;
                         currentlySelectedBall.SetVelocity(newDir, force);
                         //Thread t1 = new Thread(currentlySelectedBall.MoveOnThread);
                         //t1.Start();

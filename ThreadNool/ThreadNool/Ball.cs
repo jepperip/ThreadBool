@@ -11,6 +11,9 @@ using System.Threading.Tasks;
 
 namespace ThreadNool
 {
+    /// <summary>
+    /// This class represents a ball on the pool table.
+    /// </summary>
     class Ball
     {
         int radius;
@@ -28,6 +31,13 @@ namespace ThreadNool
         public Vector2 Velocity { get { return velocity; } }
 
         public Vector2 Direction { get { return direction; } set { direction = value; } }
+        
+        /// <summary>
+        /// The only Ball constructor, creates and initializes a ball object.
+        /// </summary>
+        /// <param name="initPos">The initial position of the ball.</param>
+        /// <param name="color">The initial color of the ball.</param>
+        /// <param name="balls">A reference to the list holding all of the balls.</param>
         public Ball(Vector2 initPos, Color color, List<Ball> balls)
         {
             radius = 16;
@@ -40,6 +50,10 @@ namespace ThreadNool
             this.balls = balls;
         }
 
+        /// <summary>
+        /// Returns the center of the ball
+        /// </summary>
+        /// <returns>- '' -</returns>
         public Vector2 GetCenter()
         {
             return new Vector2(position.X + radius, position.Y + radius);
@@ -80,6 +94,11 @@ namespace ThreadNool
             
         }
 
+        /// <summary>
+        /// Checks if a mouse click was inside the bounds of the ball
+        /// </summary>
+        /// <param name="clickPos">The point where the mouse was clicked.</param>
+        /// <returns>True if the mouse click was inside of the balls bounds, false otherwise.</returns>
         public bool ClickedOn(Point clickPos)
         {
             if (clickPos.X != -1 && clickPos.Y != -1)
@@ -122,6 +141,11 @@ namespace ThreadNool
             //}
         }
 
+        /// <summary>
+        /// Sets the velocity of the ball.
+        /// </summary>
+        /// <param name="direction">The direction of the velocity</param>
+        /// <param name="force">The force applied to the velocity</param>
         public void SetVelocity(Vector2 direction, float force)
         {
             this.direction = direction;
@@ -129,6 +153,10 @@ namespace ThreadNool
             velocity = direction * force;
         }
 
+        /// <summary>
+        /// Sets the velocity of the ball from an already existing velocity.
+        /// </summary>
+        /// <param name="velocity">The velocity which to mimic.</param>
         public void SetVelocity(Vector2 velocity)
         {
             direction = velocity;
@@ -145,7 +173,7 @@ namespace ThreadNool
         private void Work()
         {
             bool working = true;
-            while(velocity.Length() > 0.1f)
+            while(velocity.Length() > 0.0001f)
             {
                 foreach (Ball b in balls)
                 {
@@ -183,7 +211,7 @@ namespace ThreadNool
                     isActive = false;
                 }
             }
-            SetVelocity(Vector2.Zero, 0);
+            //SetVelocity(Vector2.Zero, 0);
             working = false;
             task = new Task(new Action(Work));
         }
@@ -259,13 +287,16 @@ namespace ThreadNool
         //    collisionBall.angleVelocity = collisionBall.Velocity.Length() / collisionBall.radius * Math.Sign(collisionBall.Velocity.X);
         //}
 
+        /// <summary>
+        /// Draws the ball onto the screen
+        /// </summary>
+        /// <param name="sb">The SpriteBatch object used for drawing.</param>
         public void Draw(SpriteBatch sb)
         {
             if(isActive)
             sb.Draw(texture, position, color);
             
         }
-
         object myLock = new Object();
 
     }
