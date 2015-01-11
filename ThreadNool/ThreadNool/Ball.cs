@@ -26,12 +26,65 @@ namespace ThreadNool
         bool isActive = true;
         Task task;
         List<Ball> balls;
+
+        Object resourceLock = new Object();
+
         public readonly float mass = 1.0f; //Ignore
         public int Radius { get { return radius; } }
-        public Vector2 Position { get { return position; } }
-        public Vector2 Velocity { get { return velocity; } }
+        public Vector2 Position
+        {
+            get
+            {
+                lock (resourceLock)
+                {
+                    return position;
+                }
+            }
+            set
+            {
+                lock (resourceLock)
+                {
+                    position = value;
+                }
+            }
+        }
+        public Vector2 Velocity
+        {
+            get
+            {
+                lock (resourceLock)
+                {
+                    return velocity;
+                }
+            }
+            set
+            {
+                lock (resourceLock)
+                {
+                    direction = velocity;
+                    direction.Normalize();
+                    velocity = value;
+                }
+            }
+        }
 
-        public Vector2 Direction { get { return direction; } set { direction = value; } }
+        public Vector2 Direction
+        {
+            get
+            {
+                lock (resourceLock)
+                {
+                    return direction;
+                }
+            }
+            set
+            {
+                lock (resourceLock)
+                {
+                    direction = value;
+                }
+            }
+        }
         
         /// <summary>
         /// The only Ball constructor, creates and initializes a ball object.
@@ -57,7 +110,8 @@ namespace ThreadNool
         /// <returns>- '' -</returns>
         public Vector2 GetCenter()
         {
-            return new Vector2(position.X + radius, position.Y + radius);
+            Vector2 pos = Position;
+            return new Vector2(pos.X + radius, pos.Y + radius);
         }
 
         /// <summary>
@@ -130,7 +184,7 @@ namespace ThreadNool
         {
             this.direction = direction;
             direction.Normalize();
-            velocity = direction * force;
+            Velocity = direction * force;
         }
 
         /// <summary>
@@ -141,7 +195,7 @@ namespace ThreadNool
         {
             direction = velocity;
             direction.Normalize();
-            this.velocity = velocity;
+            this.Velocity = velocity;
         }
 
         /// <summary>
@@ -217,15 +271,16 @@ namespace ThreadNool
         private Vector2 HandleBallCollision(Ball b)
         {
             Vector2 otherVel = b.Velocity;
-            if (b.Velocity.X == 0 && b.Velocity.Y == 0)
+            Vector2 tempVel = Velocity;
+            if (otherVel.X == 0 && otherVel.Y == 0)
             {
-                otherVel.X = -Velocity.X * 0.001f;
-                otherVel.Y = -Velocity.Y * 0.001f;
+                otherVel.X = -tempVel.X * 0.001f;
+                otherVel.Y = -tempVel.Y * 0.001f;
             }
-            float newVelX1 = (Velocity.X * (mass - b.mass) + (2 * b.mass * otherVel.X)) / (mass + b.mass);
-            float newVelY1 = (Velocity.Y * (mass - b.mass) + (2 * b.mass * otherVel.Y)) / (mass + b.mass);
-            float newVelX2 = (otherVel.X * (b.mass - mass) + (2 * mass * Velocity.X)) / (mass + b.mass);
-            float newVelY2 = (otherVel.Y * (b.mass - mass) + (2 * mass * Velocity.Y)) / (mass + b.mass);
+            float newVelX1 = (tempVel.X * (mass - b.mass) + (2 * b.mass * otherVel.X)) / (mass + b.mass);
+            float newVelY1 = (tempVel.Y * (mass - b.mass) + (2 * b.mass * otherVel.Y)) / (mass + b.mass);
+            float newVelX2 = (otherVel.X * (b.mass - mass) + (2 * mass * tempVel.X)) / (mass + b.mass);
+            float newVelY2 = (otherVel.Y * (b.mass - mass) + (2 * mass * tempVel.Y)) / (mass + b.mass);
 
             SetVelocity(new Vector2(newVelX1, newVelY1));
             return new Vector2(newVelX2, newVelY2);
@@ -238,9 +293,8 @@ namespace ThreadNool
         /// <param name="wall">A rectangle to responde to</param>
         private void HandleWallCollision(Rectangle wall)
         {
-            //float oldX = velocity.X;
-            //velocity.X = -velocity.Y;
-            //velocity.Y = oldX;
+            Vector2 tempPos = Position;
+            Vector2 tempVel = Velocity;
 
             float closestX = MathHelper.Clamp(GetCenter().X, wall.Left, wall.Right);
             float closestY = MathHelper.Clamp(GetCenter().Y, wall.Top, wall.Bottom);
@@ -254,15 +308,13 @@ namespace ThreadNool
                     float OverlapCorrection = GetCenter().X - closestX;
                     if (OverlapCorrection > 0)
                     {
-                        position.X += radius - OverlapCorrection;
+                        tempPos.X += radius - OverlapCorrection;
                     }
                     else
-                        position.X += (OverlapCorrection + radius) * -1;
+                    {
+                        tempPos.X += (OverlapCorrection + radius) * -1;
+                    }                        
                 }
-                float Y = Velocity.Y;
-                float X = -Velocity.X;
-                //V = -eu
-                SetVelocity(new Vector2(X, Y));
             }
             else
             {
@@ -273,24 +325,16 @@ namespace ThreadNool
                     float OverlapCorrection = GetCenter().Y - closestY;
                     if (OverlapCorrection > 0)
                     {
-                        position.Y += radius - OverlapCorrection;
+                        tempPos.Y += radius - OverlapCorrection;
                     }
                     else
                     {
-                        position.Y += (OverlapCorrection + radius) * -1;
+                        tempPos.Y += (OverlapCorrection + radius) * -1;
                     }
                 }
-
-                float X = Velocity.X; ;
-                float Y = -Velocity.Y; ;
-                //V = -eu
-                SetVelocity(new Vector2(X, Y));
-
+               
             }
-
-            
-
-
+            SetVelocity(tempVel);
         }
 
         /// <summary>
@@ -302,6 +346,5 @@ namespace ThreadNool
             if(isActive)
             sb.Draw(texture, position, color);         
         }
-
     }
 }
