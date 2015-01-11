@@ -320,6 +320,10 @@ namespace ThreadNool
                         tempPos.X += (OverlapCorrection + radius) * -1;
                     }                        
                 }
+                float Y = tempVel.Y;
+                float X = -tempVel.X;
+                tempVel = new Vector2(X, Y);
+                
             }
             else
             {
@@ -337,6 +341,9 @@ namespace ThreadNool
                         tempPos.Y += (OverlapCorrection + radius) * -1;
                     }
                 }
+                float X = tempVel.X;
+                float Y = -tempVel.Y;
+                tempVel = new Vector2(X, Y);
                
             }
             SetVelocity(tempVel);
