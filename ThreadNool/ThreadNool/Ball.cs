@@ -26,13 +26,66 @@ namespace ThreadNool
         bool isActive = true;
         Task task;
         List<Ball> balls;
+
+        Object resourceLock;
+
         public readonly float mass = 1.0f; //Ignore
         public int Radius { get { return radius; } }
-        public Vector2 Position { get { return position; } }
-        public Vector2 Velocity { get { return velocity; } }
+        public Vector2 Position
+        {
+            get
+            {
+                lock (resourceLock)
+                {
+                    return position;
+                }
+            }
+            set
+            {
+                lock (resourceLock)
+                {
+                    position = value;
+                }
+            }
+        }
+        public Vector2 Velocity
+        {
+            get
+            {
+                lock (resourceLock)
+                {
+                    return velocity;
+                }
+            }
+            set
+            {
+                lock (resourceLock)
+                {
+                    direction = velocity;
+                    direction.Normalize();
+                    velocity = value;
+                }
+            }
+        }
 
-        public Vector2 Direction { get { return direction; } set { direction = value; } }
-        
+        public Vector2 Direction
+        {
+            get
+            {
+                lock (resourceLock)
+                {
+                    return direction;
+                }
+            }
+            set
+            {
+                lock (resourceLock)
+                {
+                    direction = value;
+                }
+            }
+        }
+
         /// <summary>
         /// The only Ball constructor, creates and initializes a ball object.
         /// </summary>
@@ -41,6 +94,7 @@ namespace ThreadNool
         /// <param name="balls">A reference to the list holding all of the balls.</param>
         public Ball(Vector2 initPos, Color color, List<Ball> balls)
         {
+            resourceLock = new Object();
             radius = 16;
             position = initPos;
             this.color = initialColor = color;
@@ -113,10 +167,10 @@ namespace ThreadNool
         /// </summary>
         public void StartBallThread()
         {
-            if(task.Status != TaskStatus.Running && task.Status != TaskStatus.WaitingToRun && task.Status != TaskStatus.WaitingForActivation)
+            if (task.Status != TaskStatus.Running && task.Status != TaskStatus.WaitingToRun && task.Status != TaskStatus.WaitingForActivation)
             {
                 task.Start();
-                Debug.WriteLine("Task " + task.Id + " has started");              
+                Debug.WriteLine("Task " + task.Id + " has started");
             }
 
         }
@@ -128,9 +182,12 @@ namespace ThreadNool
         /// <param name="force">The force applied to the velocity</param>
         public void SetVelocity(Vector2 direction, float force)
         {
-            this.direction = direction;
-            direction.Normalize();
-            velocity = direction * force;
+            lock (resourceLock)
+            {
+                this.direction = direction;
+                direction.Normalize();
+                velocity = direction * force;
+            }
         }
 
         /// <summary>
@@ -139,9 +196,12 @@ namespace ThreadNool
         /// <param name="velocity">The velocity which to mimic.</param>
         public void SetVelocity(Vector2 velocity)
         {
-            direction = velocity;
-            direction.Normalize();
-            this.velocity = velocity;
+            lock (resourceLock)
+            {
+                direction = velocity;
+                direction.Normalize();
+                this.velocity = velocity;
+            }
         }
 
         /// <summary>
@@ -166,7 +226,7 @@ namespace ThreadNool
         private void Work()
         {
             bool working = true;
-            while(working && velocity.Length() > 0.0001f)
+            while (working && velocity.Length() > 0.0001f)
             {
                 if (Table.CollidedWithHole(this))
                 {
@@ -178,7 +238,7 @@ namespace ThreadNool
                 }
                 foreach (Ball b in balls)
                 {
-                    if(b != this)
+                    if (b != this)
                     {
                         if (BallManager.CheckCollision(this, b))
                         {
@@ -192,13 +252,13 @@ namespace ThreadNool
                             {
                                 position -= dir * overlap;
                             }
-                            
-                            b.Puff(responseVel); 
-                        } 
-                    }      
+
+                            b.Puff(responseVel);
+                        }
+                    }
                 }
                 Rectangle? wall = Table.CollidedWithBorder(this);
-                if(wall != null)
+                if (wall != null)
                 {
                     Debug.WriteLine("NEIN");
                     HandleWallCollision(wall ?? Rectangle.Empty);
@@ -288,7 +348,7 @@ namespace ThreadNool
 
             }
 
-            
+
 
 
         }
@@ -299,8 +359,8 @@ namespace ThreadNool
         /// <param name="sb">The SpriteBatch object used for drawing.</param>
         public void Draw(SpriteBatch sb)
         {
-            if(isActive)
-            sb.Draw(texture, position, color);         
+            if (isActive)
+                sb.Draw(texture, position, color);
         }
 
     }
