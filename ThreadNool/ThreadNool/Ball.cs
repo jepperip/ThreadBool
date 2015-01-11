@@ -99,7 +99,7 @@ namespace ThreadNool
             texture = Game1.BallTexture;
             direction = Vector2.Zero;
             velocity = Vector2.Zero;
-            task = new Task(new Action(Work));
+            //task = new Task(new Action(Work));
             this.balls = balls;
         }
 
@@ -166,12 +166,16 @@ namespace ThreadNool
         /// </summary>
         public void StartBallThread()
         {
-            if (task.Status != TaskStatus.Running && task.Status != TaskStatus.WaitingToRun && task.Status != TaskStatus.WaitingForActivation)
+            //if (task.Status != TaskStatus.Running && task.Status != TaskStatus.WaitingToRun && task.Status != TaskStatus.WaitingForActivation)
+            //{
+            //    task = Task.Factory.StartNew(new Action(Work));
+            //    Debug.WriteLine("Task " + task.Id + " has started");
+            //}
+            if (task == null || task.Status == TaskStatus.RanToCompletion)
             {
-                task.Start();
+                task = Task.Factory.StartNew(new Action(Work));
                 Debug.WriteLine("Task " + task.Id + " has started");
             }
-
         }
 
         /// <summary>
@@ -265,7 +269,7 @@ namespace ThreadNool
             }
             //SetVelocity(Vector2.Zero, 0);
             working = false;
-            task = new Task(new Action(Work));
+            //task = new Task(new Action(Work));
         }
 
         /// <summary>
