@@ -141,8 +141,8 @@ namespace ThreadNool
                         //direction.Normalize();
                     }
                 }
-                position += velocity;
-                velocity *= falloff;
+                Position = Position + Velocity;
+                Velocity = Velocity * falloff;
             }
         }
 
@@ -225,7 +225,7 @@ namespace ThreadNool
         private void Work()
         {
             bool working = true;
-            while (working && velocity.Length() > 0.0001f)
+            while (working && Velocity.Length() > 0.0001f)
             {
                 if (Table.CollidedWithHole(this))
                 {
@@ -346,6 +346,7 @@ namespace ThreadNool
                 tempVel = new Vector2(X, Y);
                
             }
+            Position = tempPos;
             SetVelocity(tempVel);
         }
 
